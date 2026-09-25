@@ -25,7 +25,7 @@ if (db.select().from(schema.transactions).limit(1).all().length) {
   process.exit(1);
 }
 if (!db.select().from(schema.categories).limit(1).all().length) {
-  db.insert(schema.categories).values(DEFAULT_CATEGORIES.map((c, i) => ({ ...c, sortOrder: i }))).run();
+  db.insert(schema.categories).values(DEFAULT_CATEGORIES.map((c, i) => ({ ...c, icon: c.slug, sortOrder: i }))).run();
 }
 const cats = db.select().from(schema.categories).all();
 const slugToId = new Map(cats.map((c) => [c.slug!, c.id]));

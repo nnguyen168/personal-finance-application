@@ -4,6 +4,8 @@ import { addMonths, formatMonth, isValidMonth, todayISO } from "@/lib/dates";
 import { getAccounts, getCategories, getReviewCount, listTransactions, type TxFilter } from "@/lib/queries";
 import { AddTransactionButton, MarkAllReviewed } from "@/components/transaction-actions";
 import { TransactionList } from "@/components/transaction-list";
+import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { CategoryIcon } from "@/components/category-icon";
 import { btn, cx, EmptyState, input, PageHeader } from "@/components/ui";
 
 export const metadata = { title: "Activity" };
@@ -45,46 +47,55 @@ export default async function TransactionsPage({ searchParams }: PageProps<"/tra
     <div>
       <PageHeader
         title="Activity"
-        subtitle={reviewCount > 0 ? `${reviewCount} new transactions to check` : "All caught up ✨"}
+        eyebrow={reviewCount > 0 ? `${reviewCount} awaiting review` : "All reviewed"}
         action={<AddTransactionButton accounts={accounts.map((a) => ({ id: a.id, name: a.name }))} categories={categories} today={todayISO()} />}
       />
 
-      <form action="/transactions" className="mb-4 flex gap-2">
+      <form action="/transactions" className="relative mb-5">
         {filter !== "all" && <input type="hidden" name="filter" value={filter} />}
         {month && <input type="hidden" name="month" value={month} />}
         {categoryId && <input type="hidden" name="category" value={categoryId} />}
-        <input name="q" defaultValue={q} placeholder="Search merchants, notes…" className={input} type="search" />
+        <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-ink-3" strokeWidth={1.5} aria-hidden />
+        <input name="q" defaultValue={q} placeholder="Search merchants and notes" className={cx(input, "pl-11")} type="search" aria-label="Search" />
       </form>
 
-      <div className="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
+      <div className="-mx-5 mb-8 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:px-0">
         {FILTERS.map((f) => (
           <Link
             key={f.key}
             href={href({ filter: f.key })}
             className={cx(
-              "shrink-0 rounded-full px-4 py-2 text-sm font-medium transition",
-              filter === f.key ? "bg-ink text-bg" : "bg-surface text-ink-2 shadow-card hover:text-ink",
+              "shrink-0 rounded-full border px-4 py-2 text-[13px] transition duration-200",
+              filter === f.key ? "border-ink bg-ink text-bg" : "border-line text-ink-2 hover:border-line-strong hover:text-ink",
             )}
           >
             {f.label}
-            {f.key === "review" && reviewCount > 0 && <span className="num ml-1.5 opacity-70">{reviewCount}</span>}
+            {f.key === "review" && reviewCount > 0 && <span className="num ml-1.5 opacity-60">{reviewCount}</span>}
           </Link>
         ))}
       </div>
 
       {(category || month) && (
-        <div className="mb-4 flex flex-wrap items-center gap-2 text-sm">
+        <div className="mb-8 flex flex-wrap items-center gap-2 text-[13px]">
           {category && (
-            <Link href={href({ category: undefined })} className="rounded-full bg-accent-soft px-3 py-1.5 font-medium text-accent">
-              {category.emoji} {category.name} ✕
+            <Link href={href({ category: undefined })} className="inline-flex items-center gap-2 rounded-full border border-line py-1.5 pr-3 pl-1.5 text-ink transition hover:border-ink">
+              <CategoryIcon icon={category.icon} name={category.name} size="sm" className="size-6" />
+              {category.name}
+              <X className="size-3.5 text-ink-3" strokeWidth={1.5} aria-label="Clear category" />
             </Link>
           )}
           {month && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-1 py-0.5 font-medium text-accent">
-              <Link href={href({ month: addMonths(month, -1) })} className="rounded-full px-2 py-1" aria-label="Previous month">‹</Link>
+            <span className="inline-flex items-center gap-1 rounded-full border border-line px-1 py-0.5 text-ink">
+              <Link href={href({ month: addMonths(month, -1) })} className="rounded-full p-1.5 text-ink-3 hover:text-ink" aria-label="Previous month">
+                <ChevronLeft className="size-3.5" strokeWidth={1.5} />
+              </Link>
               {formatMonth(month)}
-              <Link href={href({ month: addMonths(month, 1) })} className="rounded-full px-2 py-1" aria-label="Next month">›</Link>
-              <Link href={href({ month: undefined })} className="rounded-full px-2 py-1" aria-label="Any month">✕</Link>
+              <Link href={href({ month: addMonths(month, 1) })} className="rounded-full p-1.5 text-ink-3 hover:text-ink" aria-label="Next month">
+                <ChevronRight className="size-3.5" strokeWidth={1.5} />
+              </Link>
+              <Link href={href({ month: undefined })} className="rounded-full p-1.5 text-ink-3 hover:text-ink" aria-label="Any month">
+                <X className="size-3.5" strokeWidth={1.5} />
+              </Link>
             </span>
           )}
           <span className="num ml-auto text-ink-3">
@@ -94,8 +105,8 @@ export default async function TransactionsPage({ searchParams }: PageProps<"/tra
       )}
 
       {filter === "review" && txs.length > 0 && (
-        <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl bg-accent-soft px-4 py-3 text-sm text-accent">
-          <span>Tap a transaction to fix its category. Happy with the rest?</span>
+        <div className="mb-8 flex items-center justify-between gap-4 border-y border-line py-4">
+          <p className="text-[13px] leading-relaxed text-ink-2">Tap one to change its category, or confirm them all.</p>
           <MarkAllReviewed ids={txs.map((t) => t.id)} />
         </div>
       )}
@@ -104,14 +115,13 @@ export default async function TransactionsPage({ searchParams }: PageProps<"/tra
         <TransactionList transactions={txs} categories={categories} todayISO={todayISO()} />
       ) : (
         <EmptyState
-          emoji={filter === "review" ? "🎉" : "🔍"}
-          title={filter === "review" ? "Nothing to review" : "No transactions found"}
+          title={filter === "review" ? "All reviewed" : "Nothing found"}
           body={
             filter === "review"
-              ? "Every transaction has a category. Nice work."
+              ? "Every transaction has its place. Nicely done."
               : accounts.length
-                ? "Try a different search or filter."
-                : "Connect your bank or import a statement to get started."
+                ? "Try another search or filter."
+                : "Connect your bank or import a statement to begin."
           }
           action={!accounts.length ? <Link href="/accounts" className={btn.primary}>Go to accounts</Link> : undefined}
         />

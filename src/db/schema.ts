@@ -42,7 +42,10 @@ export const categories = sqliteTable("categories", {
   /** Stable key for built-in categories, used by the default categorisation rules. */
   slug: text("slug").unique(),
   name: text("name").notNull(),
+  /** Legacy (v1 used emoji); the UI now uses `icon`. */
   emoji: text("emoji").notNull().default("📦"),
+  /** Key into the line-icon set in src/components/category-icon.tsx. */
+  icon: text("icon"),
   kind: text("kind", { enum: CATEGORY_KINDS }).notNull(),
   sortOrder: integer("sort_order").notNull().default(0),
   archived: integer("archived", { mode: "boolean" }).notNull().default(false),

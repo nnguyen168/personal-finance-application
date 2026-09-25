@@ -1,5 +1,6 @@
 "use client";
 
+import { X } from "lucide-react";
 import { useEffect, useRef, type ReactNode } from "react";
 
 /** Bottom sheet on phones, centred dialog on larger screens. Built on native <dialog>. */
@@ -35,21 +36,19 @@ export function Sheet({
     >
       {open && (
         <div className="flex max-h-[92dvh] flex-col">
-          <div className="mx-auto mt-2.5 h-1.5 w-10 rounded-full bg-line sm:hidden" aria-hidden />
-          <div className="flex items-center justify-between gap-3 px-5 pt-3 pb-2 sm:pt-5">
-            <h2 className="text-lg font-semibold">{title}</h2>
+          <div className="mx-auto mt-3 h-1 w-9 rounded-full bg-line-strong sm:hidden" aria-hidden />
+          <div className="flex items-center justify-between gap-3 px-6 pt-4 pb-4 sm:px-8 sm:pt-7">
+            <h2 className="truncate font-display text-[26px] leading-tight">{title}</h2>
             <button
               type="button"
               onClick={onClose}
-              className="flex size-9 items-center justify-center rounded-full text-ink-2 hover:bg-surface-2"
+              className="flex size-9 shrink-0 items-center justify-center rounded-full border border-line text-ink-2 transition hover:border-ink hover:text-ink"
               aria-label="Close"
             >
-              <svg viewBox="0 0 20 20" fill="currentColor" className="size-5" aria-hidden>
-                <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
-              </svg>
+              <X className="size-4" strokeWidth={1.5} />
             </button>
           </div>
-          <div className="overflow-y-auto px-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))]">{children}</div>
+          <div className="overflow-y-auto px-6 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:px-8">{children}</div>
         </div>
       )}
     </dialog>

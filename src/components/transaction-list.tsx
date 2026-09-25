@@ -2,14 +2,14 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { categorizeTransaction, deleteTransaction } from "@/app/actions";
-import type { Category } from "@/db/schema";
 import { formatDayHeading, formatShortDate } from "@/lib/dates";
 import { formatMoney } from "@/lib/money";
 import type { TxRow } from "@/lib/queries";
-import { CategoryGrid } from "./category-grid";
+import { CategoryGrid, type CategoryOption } from "./category-grid";
+import { CategoryIcon } from "./category-icon";
 import { Sheet } from "./sheet";
 import { useToast } from "./toast";
-import { btn, Card, cx, EmojiBadge, input } from "./ui";
+import { btn, Card, cx, input } from "./ui";
 
 export function TransactionList({
   transactions,
@@ -18,7 +18,7 @@ export function TransactionList({
   todayISO,
 }: {
   transactions: TxRow[];
-  categories: Pick<Category, "id" | "name" | "emoji" | "kind">[];
+  categories: CategoryOption[];
   compact?: boolean;
   todayISO?: string;
 }) {
@@ -45,22 +45,28 @@ export function TransactionList({
         <button
           type="button"
           onClick={() => setEditing(t)}
-          className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-surface-2/60"
+          className="flex w-full items-center gap-4 px-5 py-4 text-left transition duration-200 hover:bg-surface-2/50"
         >
-          <EmojiBadge emoji={cat?.emoji ?? "❔"} />
+          {cat ? (
+            <CategoryIcon icon={cat.icon} name={cat.name} />
+          ) : (
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-dashed border-line-strong text-[15px] text-ink-3" aria-hidden>
+              ?
+            </span>
+          )}
           <div className="min-w-0 flex-1">
-            <p className="flex items-center gap-2 truncate font-medium">
+            <p className="flex items-center gap-2 text-[15px]">
               <span className="truncate">{t.merchant}</span>
-              {!t.reviewed && <span className="size-2 shrink-0 rounded-full bg-accent" title="Needs review" />}
+              {!t.reviewed && <span className="size-1.5 shrink-0 rounded-full bg-accent-mark" title="Needs review" />}
             </p>
-            <p className="truncate text-[13px] text-ink-3">
-              {cat ? cat.name : <span className="font-medium text-warn">Choose a category</span>}
+            <p className="mt-0.5 truncate text-[12px] text-ink-3">
+              {cat ? cat.name : <span className="text-warn">Choose a category</span>}
               {t.pending && " · pending"}
               {compact && ` · ${formatShortDate(t.date)}`}
               {t.note && ` · ${t.note}`}
             </p>
           </div>
-          <span className={cx("num shrink-0 text-[15px] font-semibold", income ? "text-ok" : "text-ink", t.pending && "opacity-60")}>
+          <span className={cx("num shrink-0 text-[15px]", income ? "text-ok" : "text-ink", t.pending && "opacity-55")}>
             {formatMoney(t.amountCents, { signed: income, decimals: true })}
           </span>
         </button>
@@ -75,12 +81,12 @@ export function TransactionList({
           <ul className="divide-y divide-line">{transactions.map(row)}</ul>
         </Card>
       ) : (
-        <div className="space-y-5">
+        <div className="space-y-8">
           {groups.map((g) => (
             <section key={g.date}>
-              <div className="mb-2 flex items-baseline justify-between px-1">
-                <h3 className="text-[13px] font-semibold tracking-wide text-ink-3 uppercase">{formatDayHeading(g.date, todayISO)}</h3>
-                <span className="num text-[13px] text-ink-3">{formatMoney(g.total, { signed: true })}</span>
+              <div className="mb-3 flex items-baseline justify-between px-1">
+                <h3 className="eyebrow">{formatDayHeading(g.date, todayISO)}</h3>
+                <span className="num text-[12px] text-ink-3">{formatMoney(g.total, { signed: true })}</span>
               </div>
               <Card className="overflow-hidden">
                 <ul className="divide-y divide-line">{g.items.map(row)}</ul>
@@ -96,15 +102,7 @@ export function TransactionList({
   );
 }
 
-function TransactionEditor({
-  tx,
-  categories,
-  onDone,
-}: {
-  tx: TxRow;
-  categories: Pick<Category, "id" | "name" | "emoji" | "kind">[];
-  onDone: () => void;
-}) {
+function TransactionEditor({ tx, categories, onDone }: { tx: TxRow; categories: CategoryOption[]; onDone: () => void }) {
   const toast = useToast();
   const [pending, start] = useTransition();
   const [categoryId, setCategoryId] = useState<number | null>(tx.categoryId);
@@ -122,66 +120,61 @@ function TransactionEditor({
     });
 
   return (
-    <div className="space-y-5">
-      <div className="rounded-2xl bg-surface-2 px-4 py-3">
-        <p className={cx("num text-2xl font-bold", tx.amountCents > 0 && "text-ok")}>
+    <div className="space-y-7">
+      <div className="text-center">
+        <p className={cx("num font-display text-[52px] leading-none tracking-[-0.02em]", tx.amountCents > 0 && "text-ok")}>
           {formatMoney(tx.amountCents, { signed: tx.amountCents > 0, decimals: true })}
         </p>
-        <p className="mt-1 text-[13px] break-words text-ink-3">
+        <p className="mt-3 text-[13px] text-ink-3">
           {formatShortDate(tx.date)} · {tx.accountName}
           {tx.pending && " · pending"}
         </p>
-        <p className="mt-1 font-mono text-[12px] break-words text-ink-3">{tx.description}</p>
+        <p className="mx-auto mt-2 max-w-sm font-mono text-[11px] tracking-tight break-words text-ink-3">{tx.description}</p>
       </div>
 
-      <div>
-        <p className="mb-2 text-sm font-medium text-ink-2">Category</p>
-        <CategoryGrid
-          categories={categories}
-          value={categoryId}
-          onChange={(id) => {
-            setCategoryId(id);
-            // One tap is enough when nothing else was changed — the common case.
-            if (merchant === tx.merchant && note === (tx.note ?? "")) save(id);
-          }}
-          disabled={pending}
-        />
-      </div>
-
-      <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-line px-4 py-3">
-        <input
-          type="checkbox"
-          checked={remember}
-          onChange={(e) => setRemember(e.target.checked)}
-          className="mt-0.5 size-5 accent-[var(--accent)]"
-        />
-        <span className="text-sm">
-          <span className="font-medium">Always use this for “{tx.merchant}”</span>
-          <span className="block text-ink-3">Applies to past and future transactions from this merchant.</span>
+      <label className="flex cursor-pointer items-center justify-between gap-4 border-y border-line py-4">
+        <span className="text-[14px]">
+          Always file <span className="font-medium">{tx.merchant}</span> this way
+          <span className="mt-0.5 block text-[12px] text-ink-3">Applies to past and future transactions</span>
         </span>
+        <Toggle checked={remember} onChange={setRemember} />
       </label>
 
-      <details className="group rounded-2xl border border-line px-4 py-3">
-        <summary className="cursor-pointer text-sm font-medium text-ink-2 select-none">Rename or add a note</summary>
-        <div className="mt-3 space-y-3">
+      <CategoryGrid
+        categories={categories}
+        value={categoryId}
+        onChange={(id) => {
+          setCategoryId(id);
+          // A single tap is enough when nothing else was edited — the usual case.
+          if (merchant === tx.merchant && note === (tx.note ?? "")) save(id);
+        }}
+        disabled={pending}
+      />
+
+      <details className="group border-t border-line pt-5">
+        <summary className="cursor-pointer text-[13px] text-ink-2 select-none marker:content-none">
+          <span className="group-open:hidden">Rename or add a note</span>
+          <span className="hidden group-open:inline">Details</span>
+        </summary>
+        <div className="mt-4 space-y-3">
           <label className="block">
-            <span className="mb-1 block text-[13px] text-ink-3">Name</span>
+            <span className="eyebrow mb-2 block">Name</span>
             <input className={input} value={merchant} onChange={(e) => setMerchant(e.target.value)} />
           </label>
           <label className="block">
-            <span className="mb-1 block text-[13px] text-ink-3">Note</span>
-            <input className={input} value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. Birthday present for Mum" />
+            <span className="eyebrow mb-2 block">Note</span>
+            <input className={input} value={note} onChange={(e) => setNote(e.target.value)} placeholder="A birthday present for Mum…" />
           </label>
         </div>
       </details>
 
-      <div className="flex items-center justify-between gap-3 pt-1">
+      <div className="flex items-center justify-between gap-3">
         <button
           type="button"
           className={btn.danger}
           disabled={pending}
           onClick={() => {
-            if (!confirm("Delete this transaction? It may come back on the next bank sync.")) return;
+            if (!confirm("Delete this transaction? It may return on the next bank sync.")) return;
             start(async () => {
               await deleteTransaction(tx.id);
               onDone();
@@ -191,9 +184,19 @@ function TransactionEditor({
           Delete
         </button>
         <button type="button" className={btn.primary} disabled={pending} onClick={() => save()}>
-          {pending ? "Saving…" : tx.reviewed ? "Save" : "Looks good"}
+          {pending ? "Saving…" : tx.reviewed ? "Save" : "Confirm"}
         </button>
       </div>
     </div>
+  );
+}
+
+export function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <span className="relative inline-flex shrink-0">
+      <input type="checkbox" className="peer sr-only" checked={checked} onChange={(e) => onChange(e.target.checked)} />
+      <span className="h-6 w-10 rounded-full bg-line-strong transition duration-200 peer-checked:bg-ink peer-focus-visible:outline peer-focus-visible:outline-offset-2" aria-hidden />
+      <span className="absolute top-0.5 left-0.5 size-5 rounded-full bg-surface shadow-sm transition duration-200 peer-checked:translate-x-4" aria-hidden />
+    </span>
   );
 }

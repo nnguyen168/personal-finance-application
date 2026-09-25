@@ -27,17 +27,17 @@ export default async function AccountsPage({ searchParams }: PageProps<"/account
   const connected = typeof sp.connected === "string" ? Number(sp.connected) : null;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-14">
       <PageHeader
         title="Accounts"
-        subtitle={accounts.length ? <>Total balance <Money cents={total} className="font-semibold text-ink" /></> : "Bring in your transactions"}
+        eyebrow={accounts.length ? <>Total <Money cents={total} className="text-ink-2" /></> : "Bring in your transactions"}
         action={linked.length > 0 ? <SyncButton /> : undefined}
       />
 
-      {bankError && <p className="rounded-2xl bg-bad-soft px-4 py-3 text-sm text-bad">Couldn&rsquo;t connect the bank: {bankError}</p>}
+      {bankError && <p className="rounded-2xl bg-bad-soft px-5 py-4 text-[13px] text-bad">Couldn&rsquo;t connect the bank: {bankError}</p>}
       {connected !== null && (
-        <p className="rounded-2xl bg-ok-soft px-4 py-3 text-sm text-ok">
-          Connected {connected} {connected === 1 ? "account" : "accounts"} and imported {sp.added ?? 0} transactions. 🎉
+        <p className="rounded-2xl border border-line px-5 py-4 text-[13px] text-ink-2">
+          Connected {connected} {connected === 1 ? "account" : "accounts"} and imported {sp.added ?? 0} transactions.
         </p>
       )}
 
@@ -50,11 +50,11 @@ export default async function AccountsPage({ searchParams }: PageProps<"/account
       )}
 
       <section>
-        <SectionHeader title="Connect CCF automatically" subtitle="Read-only access through open banking (PSD2). Transactions sync by themselves." />
-        <Card className="p-5">
+        <SectionHeader title="Connect CCF" subtitle="Read-only access through open banking (PSD2). Transactions sync by themselves." />
+        <Card className="p-6 sm:p-8">
           {configured ? (
             bankListError ? (
-              <p className="text-sm text-bad">Couldn&rsquo;t load the list of banks: {bankListError}</p>
+              <p className="text-[13px] text-bad">Couldn&rsquo;t load the list of banks: {bankListError}</p>
             ) : (
               <ConnectBankForm banks={banks.map((b) => ({ name: b.name, logo: b.logo ?? null }))} />
             )
@@ -66,14 +66,14 @@ export default async function AccountsPage({ searchParams }: PageProps<"/account
 
       <section>
         <SectionHeader title="Import a statement" subtitle="Download an OFX or CSV file from CCF online banking and drop it here. Re-importing the same period is safe — duplicates are skipped." />
-        <Card className="p-5">
+        <Card className="p-6 sm:p-8">
           <ImportForm accounts={accounts.map((a) => ({ id: a.id, name: a.name }))} />
         </Card>
       </section>
 
       <section>
         <SectionHeader title="Add an account by hand" subtitle="For a cash wallet, or to import statements into." />
-        <Card className="p-5">
+        <Card className="p-6 sm:p-8">
           <AddAccountForm />
         </Card>
       </section>
@@ -83,11 +83,11 @@ export default async function AccountsPage({ searchParams }: PageProps<"/account
 
 function SetupInstructions() {
   return (
-    <div className="space-y-3 text-sm text-ink-2">
-      <p className="font-medium text-ink">One-time setup (about 10 minutes)</p>
-      <ol className="list-decimal space-y-2 pl-5">
+    <div className="space-y-4 text-[14px] leading-relaxed text-ink-2">
+      <p className="font-display text-[22px] text-ink">A one-time setup, about ten minutes</p>
+      <ol className="list-decimal space-y-3 pl-5 marker:text-ink-3">
         <li>
-          Create a free account at <a className="font-medium text-accent underline" href="https://enablebanking.com/cp/" target="_blank" rel="noreferrer">enablebanking.com</a> and register an application
+          Create a free account at <a className="text-ink underline decoration-accent-mark underline-offset-[3px]" href="https://enablebanking.com/cp/" target="_blank" rel="noreferrer">enablebanking.com</a> and register an application
           (environment <em>Production</em>, redirect URL <code className="rounded bg-surface-2 px-1">https://&lt;your-app&gt;/api/bank/callback</code>).
         </li>
         <li>In the control panel, link your CCF account(s) — this activates free &ldquo;restricted&rdquo; access to your own accounts.</li>
