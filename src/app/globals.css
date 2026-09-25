@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+/*
+ * Hearth design tokens. Calm warm neutrals, one confident green accent, and
+ * status colours reserved for meaning (on track / watch out / over).
+ */
+:root {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --surface-2: #efede7;
+  --ink: #1d1c1a;
+  --ink-2: #5d5a53;
+  --ink-3: #8f8b82;
+  --line: #e4e1d9;
+  --accent: #1f7a5a;
+  --accent-ink: #ffffff;
+  --accent-soft: #e2f1ea;
+  --ok: #1f7a5a;
+  --ok-soft: #e2f1ea;
+  --warn: #b7791f;
+  --warn-soft: #fbf0dc;
+  --bad: #c2410c;
+  --bad-soft: #fde7dc;
+  --fixed: #4f5bd5;
+  --fixed-soft: #e8eafb;
+  --track: #ebe8e1;
+  --chart-fixed: #4f5bd5;
+  --chart-flex: #0a8a5c;
+  --shadow: 0 1px 2px rgb(29 28 26 / 0.04), 0 4px 16px rgb(29 28 26 / 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121211;
+    --surface: #1b1b19;
+    --surface-2: #242421;
+    --ink: #f1efe9;
+    --ink-2: #b9b5ab;
+    --ink-3: #8a867d;
+    --line: #2e2d2a;
+    --accent: #4cc093;
+    --accent-ink: #0b1f17;
+    --accent-soft: #173327;
+    --ok: #4cc093;
+    --ok-soft: #173327;
+    --warn: #e3a94b;
+    --warn-soft: #3a2c14;
+    --bad: #f07a4a;
+    --bad-soft: #3d1f14;
+    --fixed: #8d96f0;
+    --fixed-soft: #23264a;
+    --track: #2c2b28;
+    --chart-fixed: #6f79e0;
+    --chart-flex: #2fa377;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-fixed: var(--fixed);
+  --color-fixed-soft: var(--fixed-soft);
+  --color-track: var(--track);
+  --color-chart-fixed: var(--chart-fixed);
+  --color-chart-flex: var(--chart-flex);
+  --shadow-card: var(--shadow);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Bottom sheets / dialogs */
+dialog.sheet {
+  margin: auto auto 0;
+  width: 100%;
+  max-width: 34rem;
+  max-height: 92dvh;
+  border: 0;
+  padding: 0;
+  border-radius: 1.5rem 1.5rem 0 0;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 -8px 40px rgb(0 0 0 / 0.18);
+}
+dialog.sheet::backdrop {
+  background: rgb(15 15 14 / 0.45);
+  backdrop-filter: blur(2px);
+}
+dialog.sheet[open] {
+  animation: sheet-up 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (min-width: 640px) {
+  dialog.sheet {
+    margin: auto;
+    border-radius: 1.5rem;
+  }
+  dialog.sheet[open] {
+    animation: sheet-pop 180ms ease-out;
+  }
+}
+@keyframes sheet-up {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes sheet-pop {
+  from { transform: scale(0.97); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog.sheet[open] { animation: none; }
+}
+
+/* Remove number spinners on amount inputs */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; }
