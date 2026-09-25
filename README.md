@@ -3,9 +3,9 @@
 A calm, phone-first budgeting app for a household that banks with **CCF**. Open it any day of the month and it tells you one thing first: **how much is left to spend**, and how much that is per day.
 
 <p>
-  <img src="docs/home.png" width="240" alt="Home screen: left to spend this month, per-category bars with a pace marker, fixed bills checklist">
-  <img src="docs/categorize.png" width="240" alt="Tap a transaction to recategorise it in one tap">
-  <img src="docs/review-dark.png" width="240" alt="Review queue in dark mode">
+  <img src="docs/home.png" width="240" alt="Home screen: left to spend this month, per-category lines with a pace marker">
+  <img src="docs/home-dark.png" width="240" alt="Home screen in dark mode">
+  <img src="docs/categorize.png" width="240" alt="Recategorise a transaction in one tap">
 </p>
 
 ## What it does
@@ -23,7 +23,8 @@ A calm, phone-first budgeting app for a household that banks with **CCF**. Open 
 - **Give every euro a job** (like YNAB): the *left to plan* figure shows whether the plan fits your income.
 - **Review queue** (like Copilot): new transactions get a dot until someone confirms them. One tap on a category saves it, and ticking **"Always use this for …"** creates a rule, re-files past transactions and handles future ones.
 - **Uncategorised spending counts as everyday spending**, so "left to spend" can only be too cautious, never too optimistic.
-- Phone-first: a bottom tab bar and bottom sheets for thumbs, and it installs to the home screen as a PWA. It follows the system's light or dark mode, and amounts use French formatting (1 234,56 €).
+- **Quiet, premium look.** Warm ivory paper and near-black ink, a serif (Instrument Serif) for headings and numbers, Inter for everything else, and thin line icons (Lucide). A single champagne accent marks what matters: the pace tick, items to review. Colour appears only when something needs attention: ochre when a category runs ahead of pace, terracotta when it goes over. Every text colour meets WCAG AA contrast in both light and dark mode.
+- Phone-first: a bottom tab bar and bottom sheets for thumbs, and it installs to the home screen as a PWA. Amounts use French formatting (1 234,56 €).
 
 ## Quick start
 

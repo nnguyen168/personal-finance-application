@@ -1,26 +1,24 @@
 "use client";
 
+import { ChartPie, House, LayoutGrid, Rows3, WalletCards, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
-import { cx } from "./ui";
+import { cx } from "./cx";
 
-const icon = (d: ReactNode) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="size-6" aria-hidden>
-    {d}
-  </svg>
-);
-
-const ITEMS = [
-  { href: "/", label: "Home", icon: icon(<><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5" /></>) },
-  { href: "/transactions", label: "Activity", icon: icon(<><path d="M4 6h16M4 12h16M4 18h10" /></>) },
-  { href: "/budget", label: "Budget", icon: icon(<><circle cx="12" cy="12" r="9" /><path d="M12 3v9l6.4 6.4" /></>) },
-  { href: "/accounts", label: "Accounts", icon: icon(<><rect x="3" y="6" width="18" height="13" rx="2" /><path d="M3 10h18M7 15h3" /></>) },
-  { href: "/categories", label: "Categories", icon: icon(<><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4z" /><circle cx="16.5" cy="16.5" r="3.5" /></>) },
+const ITEMS: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: "/", label: "Home", icon: House },
+  { href: "/transactions", label: "Activity", icon: Rows3 },
+  { href: "/budget", label: "Budget", icon: ChartPie },
+  { href: "/accounts", label: "Accounts", icon: WalletCards },
+  { href: "/categories", label: "Categories", icon: LayoutGrid },
 ];
 
 function isActive(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
+}
+
+export function Wordmark({ className }: { className?: string }) {
+  return <span className={cx("font-display leading-none tracking-tight italic", className)}>Hearth</span>;
 }
 
 export function Nav({ reviewCount }: { reviewCount: number }) {
@@ -28,54 +26,58 @@ export function Nav({ reviewCount }: { reviewCount: number }) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-line bg-surface px-4 py-6 lg:flex">
-        <Link href="/" className="mb-8 flex items-center gap-2.5 px-3">
-          <span className="flex size-9 items-center justify-center rounded-xl bg-accent text-lg text-accent-ink">🔥</span>
-          <span className="text-lg font-bold tracking-tight">Hearth</span>
+      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-line px-8 py-10 lg:flex">
+        <Link href="/" className="mb-14 flex items-baseline gap-2">
+          <Wordmark className="text-[30px]" />
+          <span className="size-1.5 rounded-full bg-accent-mark" aria-hidden />
         </Link>
         <nav className="flex flex-col gap-1">
-          {ITEMS.map((item) => {
-            const active = isActive(pathname, item.href);
+          {ITEMS.map(({ href, label, icon: Icon }) => {
+            const active = isActive(pathname, href);
             return (
               <Link
-                key={item.href}
-                href={item.href}
+                key={href}
+                href={href}
                 className={cx(
-                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium transition",
-                  active ? "bg-accent-soft text-accent" : "text-ink-2 hover:bg-surface-2 hover:text-ink",
+                  "group flex items-center gap-3.5 rounded-full py-2.5 text-[14px] transition duration-200",
+                  active ? "font-medium text-ink" : "text-ink-3 hover:text-ink",
                 )}
               >
-                {item.icon}
-                <span className="flex-1">{item.label}</span>
-                {item.href === "/transactions" && reviewCount > 0 && (
-                  <span className="num rounded-full bg-accent px-2 py-0.5 text-xs font-semibold text-accent-ink">{reviewCount}</span>
+                <Icon className="size-[18px]" strokeWidth={active ? 1.8 : 1.4} aria-hidden />
+                <span className="flex-1">{label}</span>
+                {href === "/transactions" && reviewCount > 0 && (
+                  <span className="num text-[12px] font-medium text-accent">{reviewCount}</span>
                 )}
+                {active && <span className="h-px w-4 bg-ink" aria-hidden />}
               </Link>
             );
           })}
         </nav>
+        <p className="mt-auto text-[12px] leading-relaxed text-ink-3">
+          A calm view of
+          <br />
+          the household&rsquo;s money.
+        </p>
       </aside>
 
       {/* Mobile tab bar */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden">
-        <div className="mx-auto flex max-w-lg">
-          {ITEMS.map((item) => {
-            const active = isActive(pathname, item.href);
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)] lg:hidden">
+        <div className="mx-auto flex max-w-lg px-2">
+          {ITEMS.map(({ href, label, icon: Icon }) => {
+            const active = isActive(pathname, href);
             return (
               <Link
-                key={item.href}
-                href={item.href}
+                key={href}
+                href={href}
                 className={cx(
-                  "relative flex flex-1 flex-col items-center gap-0.5 pt-2 pb-1.5 text-[11px] font-medium transition",
-                  active ? "text-accent" : "text-ink-3",
+                  "relative flex flex-1 flex-col items-center gap-1 pt-3 pb-2 text-[10px] tracking-wide transition duration-200",
+                  active ? "font-medium text-ink" : "text-ink-3",
                 )}
               >
-                {item.icon}
-                {item.label}
-                {item.href === "/transactions" && reviewCount > 0 && (
-                  <span className="num absolute top-1 left-1/2 ml-2 min-w-5 rounded-full bg-accent px-1.5 text-center text-[10px] leading-5 font-bold text-accent-ink">
-                    {reviewCount > 99 ? "99+" : reviewCount}
-                  </span>
+                <Icon className="size-[22px]" strokeWidth={active ? 1.7 : 1.3} aria-hidden />
+                {label}
+                {href === "/transactions" && reviewCount > 0 && (
+                  <span className="absolute top-2.5 left-1/2 ml-2.5 size-1.5 rounded-full bg-accent-mark" aria-label={`${reviewCount} to review`} />
                 )}
               </Link>
             );

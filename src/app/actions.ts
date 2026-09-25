@@ -211,7 +211,7 @@ export async function deleteTransaction(id: number): Promise<ActionResult> {
 const categorySchema = z.object({
   id: z.coerce.number().int().optional(),
   name: z.string().trim().min(1, "Give it a name").max(40),
-  emoji: z.string().trim().min(1).max(8),
+  icon: z.string().trim().max(40).optional().transform((v) => v || null),
   kind: z.enum(CATEGORY_KINDS),
 });
 

@@ -1,7 +1,7 @@
 import { CATEGORY_KINDS } from "@/db/schema";
 import { authEnabled } from "@/lib/session";
 import { getCategories, getRules } from "@/lib/queries";
-import { KIND_LABELS } from "@/components/category-grid";
+import { KIND_LABELS } from "@/lib/kinds";
 import { AddCategoryButton, CategoryRow, RecategorizeButton, RuleRow } from "@/components/category-forms";
 import { logout } from "@/app/actions";
 import { btn, Card, PageHeader, SectionHeader } from "@/components/ui";
@@ -9,10 +9,10 @@ import { btn, Card, PageHeader, SectionHeader } from "@/components/ui";
 export const metadata = { title: "Categories" };
 
 const KIND_HELP: Record<(typeof CATEGORY_KINDS)[number], string> = {
-  flexible: "Day-to-day spending you control. Counted in “left to spend”.",
+  flexible: "Day-to-day spending you control, followed by “left to spend”.",
   fixed: "Bills that are about the same every month.",
   income: "Money coming in.",
-  transfer: "Moves between your own accounts, savings and card settlements — ignored by the budget.",
+  transfer: "Moves between your own accounts, savings and card settlements. Ignored by the budget.",
 };
 
 export default async function CategoriesPage() {
@@ -20,13 +20,13 @@ export default async function CategoriesPage() {
   const byId = new Map(categories.map((c) => [c.id, c]));
 
   return (
-    <div className="space-y-8">
-      <PageHeader title="Categories" subtitle="Organise spending the way your household thinks about it." action={<AddCategoryButton />} />
+    <div className="space-y-14">
+      <PageHeader title="Categories" subtitle="Arranged the way your household thinks about money." action={<AddCategoryButton />} />
 
       {(["flexible", "fixed", "income", "transfer"] as const).map((kind) => (
         <section key={kind}>
           <SectionHeader title={KIND_LABELS[kind]} subtitle={KIND_HELP[kind]} />
-          <Card className="divide-y divide-line">
+          <Card className="divide-y divide-line overflow-hidden">
             {categories
               .filter((c) => c.kind === kind)
               .map((c) => (
@@ -38,15 +38,15 @@ export default async function CategoriesPage() {
 
       <section>
         <SectionHeader
-          title="Auto-categorisation rules"
-          subtitle="Created when you tick “Always use this” on a transaction. Built-in rules already know most French shops and billers."
+          title="Rules"
+          subtitle="Hearth already recognises most French shops and billers. Your own rules take precedence."
           action={<RecategorizeButton />}
         />
-        <Card className="divide-y divide-line">
+        <Card className="divide-y divide-line overflow-hidden">
           {rules.length ? (
             rules.map((r) => <RuleRow key={r.id} rule={r} category={byId.get(r.categoryId)} />)
           ) : (
-            <p className="px-4 py-6 text-center text-sm text-ink-3">No custom rules yet.</p>
+            <p className="px-6 py-10 text-center text-[13px] text-ink-3">No custom rules yet. Choose “Always file this way” on a transaction to create one.</p>
           )}
         </Card>
       </section>

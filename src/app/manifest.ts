@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Know what's left to spend, any day of the month.",
     start_url: "/",
     display: "standalone",
-    background_color: "#f5f4f0",
-    theme_color: "#1f7a5a",
+    background_color: "#f5f3ee",
+    theme_color: "#17150f",
     icons: [{ src: "/icon.svg", sizes: "any", type: "image/svg+xml" }],
   };
 }

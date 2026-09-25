@@ -28,7 +28,7 @@ function seedDefaults(db: DB) {
   const existing = db.select({ id: schema.categories.id }).from(schema.categories).limit(1).all();
   if (existing.length > 0) return;
   db.insert(schema.categories)
-    .values(DEFAULT_CATEGORIES.map((c, i) => ({ ...c, sortOrder: i })))
+    .values(DEFAULT_CATEGORIES.map((c, i) => ({ ...c, icon: c.slug, sortOrder: i })))
     .run();
 }
 

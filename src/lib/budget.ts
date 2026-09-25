@@ -4,7 +4,8 @@ import { daysInMonth } from "./dates";
 export interface BudgetCategory {
   id: number;
   name: string;
-  emoji: string;
+  emoji?: string;
+  icon?: string | null;
   kind: CategoryKind;
 }
 

@@ -1,58 +1,56 @@
 @import "tailwindcss";
 
 /*
- * Hearth design tokens. Calm warm neutrals, one confident green accent, and
- * status colours reserved for meaning (on track / watch out / over).
+ * Hearth design tokens.
+ *
+ * Warm ivory paper and near-black ink, with one champagne accent used sparingly.
+ * Colour is reserved for meaning: ochre = spending ahead of pace,
+ * terracotta = over budget. Every text colour below is ≥ 4.5:1 against the
+ * backgrounds it sits on, in both themes.
  */
 :root {
-  --bg: #f5f4f0;
-  --surface: #ffffff;
-  --surface-2: #efede7;
-  --ink: #1d1c1a;
-  --ink-2: #5d5a53;
-  --ink-3: #8f8b82;
-  --line: #e4e1d9;
-  --accent: #1f7a5a;
-  --accent-ink: #ffffff;
-  --accent-soft: #e2f1ea;
-  --ok: #1f7a5a;
-  --ok-soft: #e2f1ea;
-  --warn: #b7791f;
-  --warn-soft: #fbf0dc;
-  --bad: #c2410c;
-  --bad-soft: #fde7dc;
-  --fixed: #4f5bd5;
-  --fixed-soft: #e8eafb;
-  --track: #ebe8e1;
-  --chart-fixed: #4f5bd5;
-  --chart-flex: #0a8a5c;
-  --shadow: 0 1px 2px rgb(29 28 26 / 0.04), 0 4px 16px rgb(29 28 26 / 0.04);
+  --bg: #f5f3ee;
+  --surface: #fdfcfa;
+  --surface-2: #efece5;
+  --ink: #17150f;
+  --ink-2: #57534a;
+  --ink-3: #6c665b;
+  --line: #e4dfd5;
+  --line-strong: #cfc8ba;
+  --accent: #7f653d;
+  --accent-mark: #b3935f;
+  --ok: #46634d;
+  --warn: #8c5e14;
+  --warn-soft: #f4e9d5;
+  --bad: #a3402a;
+  --bad-soft: #f5e1da;
+  --track: #e7e2d8;
+  --chart-fixed: #2f5aa0;
+  --chart-flex: #a86d24;
+  --shadow: 0 1px 1px rgb(23 21 15 / 0.03), 0 12px 32px -12px rgb(23 21 15 / 0.08);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #121211;
-    --surface: #1b1b19;
-    --surface-2: #242421;
-    --ink: #f1efe9;
-    --ink-2: #b9b5ab;
-    --ink-3: #8a867d;
-    --line: #2e2d2a;
-    --accent: #4cc093;
-    --accent-ink: #0b1f17;
-    --accent-soft: #173327;
-    --ok: #4cc093;
-    --ok-soft: #173327;
-    --warn: #e3a94b;
-    --warn-soft: #3a2c14;
-    --bad: #f07a4a;
-    --bad-soft: #3d1f14;
-    --fixed: #8d96f0;
-    --fixed-soft: #23264a;
-    --track: #2c2b28;
-    --chart-fixed: #6f79e0;
-    --chart-flex: #2fa377;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+    --bg: #0d0d0c;
+    --surface: #161614;
+    --surface-2: #1f1e1c;
+    --ink: #eeeae2;
+    --ink-2: #b5b0a5;
+    --ink-3: #8e897f;
+    --line: #2a2926;
+    --line-strong: #3b3935;
+    --accent: #cbb085;
+    --accent-mark: #cbb085;
+    --ok: #a9c3a2;
+    --warn: #ddae62;
+    --warn-soft: #2e2415;
+    --bad: #e98c70;
+    --bad-soft: #321b14;
+    --track: #2a2926;
+    --chart-fixed: #5c80c8;
+    --chart-flex: #b98137;
+    --shadow: 0 0 0 1px rgb(0 0 0 / 0.2);
   }
 }
 
@@ -64,22 +62,20 @@
   --color-ink-2: var(--ink-2);
   --color-ink-3: var(--ink-3);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-accent: var(--accent);
-  --color-accent-ink: var(--accent-ink);
-  --color-accent-soft: var(--accent-soft);
+  --color-accent-mark: var(--accent-mark);
   --color-ok: var(--ok);
-  --color-ok-soft: var(--ok-soft);
   --color-warn: var(--warn);
   --color-warn-soft: var(--warn-soft);
   --color-bad: var(--bad);
   --color-bad-soft: var(--bad-soft);
-  --color-fixed: var(--fixed);
-  --color-fixed-soft: var(--fixed-soft);
   --color-track: var(--track);
   --color-chart-fixed: var(--chart-fixed);
   --color-chart-flex: var(--chart-flex);
   --shadow-card: var(--shadow);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-serif), "Iowan Old Style", Georgia, serif;
 }
 
 html {
@@ -89,56 +85,82 @@ html {
 body {
   background: var(--bg);
   color: var(--ink);
+  font-feature-settings: "cv11", "ss01";
+  letter-spacing: -0.005em;
+}
+
+::selection {
+  background: var(--accent-mark);
+  color: var(--bg);
 }
 
 .num {
   font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";
+}
+
+/* Small caps-style labels used for section eyebrows. */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+:focus-visible {
+  outline: 1.5px solid var(--ink);
+  outline-offset: 2px;
 }
 
 /* Bottom sheets / dialogs */
 dialog.sheet {
   margin: auto auto 0;
   width: 100%;
-  max-width: 34rem;
+  max-width: 32rem;
   max-height: 92dvh;
   border: 0;
   padding: 0;
-  border-radius: 1.5rem 1.5rem 0 0;
+  border-radius: 28px 28px 0 0;
   background: var(--surface);
   color: var(--ink);
-  box-shadow: 0 -8px 40px rgb(0 0 0 / 0.18);
+  box-shadow: 0 -24px 60px -20px rgb(0 0 0 / 0.25);
 }
 dialog.sheet::backdrop {
-  background: rgb(15 15 14 / 0.45);
-  backdrop-filter: blur(2px);
+  background: rgb(13 13 12 / 0.4);
+  backdrop-filter: blur(6px);
 }
 dialog.sheet[open] {
-  animation: sheet-up 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: sheet-up 320ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 @media (min-width: 640px) {
   dialog.sheet {
     margin: auto;
-    border-radius: 1.5rem;
+    border-radius: 28px;
+    border: 1px solid var(--line);
   }
   dialog.sheet[open] {
-    animation: sheet-pop 180ms ease-out;
+    animation: sheet-pop 220ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 }
 @keyframes sheet-up {
-  from { transform: translateY(40px); opacity: 0; }
+  from { transform: translateY(48px); opacity: 0; }
   to { transform: none; opacity: 1; }
 }
 @keyframes sheet-pop {
-  from { transform: scale(0.97); opacity: 0; }
+  from { transform: translateY(8px) scale(0.985); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+/* Gentle entrance for page content. */
+.rise {
+  animation: rise 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes rise {
+  from { transform: translateY(6px); opacity: 0; }
   to { transform: none; opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  dialog.sheet[open] { animation: none; }
+  dialog.sheet[open],
+  .rise { animation: none; }
 }
-
-/* Remove number spinners on amount inputs */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-input[type="number"] { -moz-appearance: textfield; }

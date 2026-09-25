@@ -5,6 +5,8 @@ import { copyBudget, setBudget } from "@/app/actions";
 import type { CategoryLine } from "@/lib/budget";
 import type { BudgetSuggestion } from "@/lib/queries";
 import { formatMoney } from "@/lib/money";
+import { Check } from "lucide-react";
+import { CategoryIcon } from "./category-icon";
 import { useToast } from "./toast";
 import { btn, Card, cx, ProgressBar } from "./ui";
 
@@ -20,11 +22,11 @@ export function CopyBudgetButtons({ month, hasPlan }: { month: string; hasPlan: 
   };
   return (
     <div className="flex flex-wrap gap-2">
-      <button type="button" className={btn.secondary} disabled={pending} onClick={() => run("last-plan")}>
+      <button type="button" className={cx(btn.secondary, "h-9 px-4 text-[13px]")} disabled={pending} onClick={() => run("last-plan")}>
         Copy last month
       </button>
-      <button type="button" className={btn.secondary} disabled={pending} onClick={() => run("average")}>
-        Use 3-month average
+      <button type="button" className={cx(btn.secondary, "h-9 px-4 text-[13px]")} disabled={pending} onClick={() => run("average")}>
+        Use my averages
       </button>
     </div>
   );
@@ -51,19 +53,19 @@ export function BudgetSection({
   const actual = lines.reduce((s, l) => s + l.actualCents, 0);
   return (
     <section>
-      <div className="mb-3 flex items-end justify-between gap-3 px-1">
-        <div>
-          <h2 className="text-[15px] font-semibold">{title}</h2>
-          <p className="mt-0.5 text-[13px] text-ink-3">{description}</p>
+      <div className="mb-5 flex items-end justify-between gap-4 px-1">
+        <div className="min-w-0">
+          <h2 className="font-display text-[28px] leading-tight">{title}</h2>
+          <p className="mt-1 text-[13px] leading-relaxed text-ink-3">{description}</p>
         </div>
         <div className="shrink-0 text-right">
-          <p className="num text-[15px] font-semibold">{formatMoney(total, { decimals: false })}</p>
-          <p className="num text-[12px] text-ink-3">
+          <p className="num font-display text-[28px] leading-tight">{formatMoney(total, { decimals: false })}</p>
+          <p className="num mt-1 text-[12px] text-ink-3">
             {formatMoney(actual, { decimals: false })} {kind === "income" ? "received" : "spent"}
           </p>
         </div>
       </div>
-      <Card className="divide-y divide-line">
+      <Card className="divide-y divide-line overflow-hidden">
         {lines.map((l) => (
           <BudgetRow key={l.category.id} month={month} line={l} suggestion={suggestions[l.category.id]} kind={kind} timeFraction={timeFraction} />
         ))}
@@ -116,14 +118,12 @@ function BudgetRow({
   const quick = hint ? (hint.avg3 || hint.lastActual) : 0;
 
   return (
-    <div className="px-4 py-3.5">
-      <div className="flex items-center gap-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-surface-2 text-xl" aria-hidden>
-          {line.category.emoji}
-        </span>
+    <div className="px-5 py-4">
+      <div className="flex items-center gap-4">
+        <CategoryIcon icon={line.category.icon} name={line.category.name} />
         <div className="min-w-0 flex-1">
-          <p className="truncate font-medium">{line.category.name}</p>
-          <p className="truncate text-[12px] text-ink-3">
+          <p className="truncate text-[15px]">{line.category.name}</p>
+          <p className="mt-0.5 text-[12px] leading-relaxed text-ink-3">
             {line.actualCents !== 0 && (
               <>
                 {formatMoney(line.actualCents, { decimals: false })} {kind === "income" ? "in" : "spent"}
@@ -133,7 +133,7 @@ function BudgetRow({
             {hint && (
               <button
                 type="button"
-                className="underline decoration-dotted underline-offset-2 hover:text-accent"
+                className="text-accent underline decoration-accent-mark/50 underline-offset-[3px] transition hover:decoration-accent"
                 onClick={() => {
                   const v = centsToInput(quick);
                   setValue(v);
@@ -146,7 +146,7 @@ function BudgetRow({
             )}
           </p>
         </div>
-        <label className="relative w-28 shrink-0">
+        <label className="relative w-24 shrink-0 sm:w-28">
           <span className="sr-only">Budget for {line.category.name}</span>
           <input
             inputMode="decimal"
@@ -156,17 +156,17 @@ function BudgetRow({
             onBlur={(e) => save(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()}
             className={cx(
-              "num h-10 w-full rounded-xl border bg-surface-2 pr-7 pl-3 text-right text-[15px] font-semibold outline-none transition focus:border-accent focus:bg-surface focus:ring-4 focus:ring-accent/15",
-              saved ? "border-ok" : "border-transparent",
+              "num h-11 w-full border-0 border-b bg-transparent pr-6 pl-2 text-right text-[17px] outline-none transition duration-200 placeholder:text-ink-3/60 focus:border-ink",
+              saved ? "border-ok" : "border-line",
             )}
           />
-          <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-ink-3">
-            {pending ? "…" : saved ? "✓" : "€"}
+          <span className="pointer-events-none absolute top-1/2 right-0 -translate-y-1/2 text-[13px] text-ink-3">
+            {pending ? "…" : saved ? <Check className="size-3.5 text-ok" strokeWidth={2} /> : "€"}
           </span>
         </label>
       </div>
       {kind === "flexible" && line.budgetCents > 0 && (
-        <div className="mt-3 pl-[52px]">
+        <div className="mt-3 pl-14">
           <ProgressBar value={line.progress} pace={timeFraction} status={line.status} size="sm" label={line.category.name} />
         </div>
       )}

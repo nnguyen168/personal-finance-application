@@ -6,8 +6,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <>
       <Nav reviewCount={reviewCount} />
-      <main className="mx-auto w-full max-w-3xl px-4 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-32 sm:px-6 lg:ml-60 lg:max-w-none lg:px-10 lg:pt-10 lg:pb-16">
-        <div className="mx-auto max-w-3xl">{children}</div>
+      <main className="px-5 pt-[calc(2.5rem+env(safe-area-inset-top))] pb-36 sm:px-8 lg:ml-64 lg:px-16 lg:pt-16 lg:pb-24">
+        <div className="rise mx-auto max-w-2xl">{children}</div>
       </main>
     </>
   );

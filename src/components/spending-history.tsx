@@ -29,9 +29,9 @@ export function SpendingHistory({ data }: { data: Point[] }) {
 
   return (
     <figure>
-      <div className="mb-4 flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-ink-2">
-        <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-chart-fixed" aria-hidden />Fixed bills</span>
-        <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-chart-flex" aria-hidden />Everyday spending</span>
+      <div className="mb-6 flex flex-wrap gap-x-6 gap-y-1 text-[12px] text-ink-3">
+        <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-full bg-chart-fixed" aria-hidden />Fixed bills</span>
+        <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-full bg-chart-flex" aria-hidden />Everyday spending</span>
         <span className="flex items-center gap-1.5"><span className="h-0.5 w-3.5 rounded-full bg-ink" aria-hidden />Income</span>
       </div>
 
@@ -56,14 +56,14 @@ export function SpendingHistory({ data }: { data: Point[] }) {
               return (
                 <div key={d.month} className="group relative flex h-full w-full max-w-16 flex-col items-center justify-end">
                   {/* Hover target is the whole column slot, wider than the bar. */}
-                  <div className="flex w-6 flex-col justify-end gap-[2px]">
+                  <div className="flex w-5 flex-col justify-end gap-[2px]">
                     {flexH > 0 && <div className="rounded-t bg-chart-flex" style={{ height: Math.max(flexH - 2, 1) }} />}
                     {fixedH > 0 && <div className={flexH > 0 ? "bg-chart-fixed" : "rounded-t bg-chart-fixed"} style={{ height: fixedH }} />}
                   </div>
                   {d.income > 0 && (
                     <div className="absolute h-0.5 w-9 rounded-full bg-ink ring-2 ring-surface" style={{ bottom: incomeY - 1 }} />
                   )}
-                  <div className="pointer-events-none absolute bottom-full z-10 mb-2 hidden w-44 rounded-xl bg-ink px-3 py-2 text-[12px] text-bg shadow-lg group-hover:block">
+                  <div className="pointer-events-none absolute bottom-full z-10 mb-2 hidden w-44 rounded-2xl bg-ink px-4 py-3 text-[12px] text-bg shadow-lg group-hover:block">
                     <p className="mb-1 font-semibold">{formatMonth(d.month)}</p>
                     <p className="num flex justify-between"><span>Fixed</span>{formatMoney(d.fixed, { decimals: false })}</p>
                     <p className="num flex justify-between"><span>Everyday</span>{formatMoney(d.flexible, { decimals: false })}</p>
